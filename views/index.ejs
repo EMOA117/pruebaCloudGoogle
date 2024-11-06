@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud storage CRUD APP</title>
+</head>
+<body>
+    <h1>Cloud storage CRUD APP</h1>
+
+    <!-- Form to upload PDF -->
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="pdf">Upload PDF:</label>
+        <input type="file" id="pdf" name="file" accept="application/pdf" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <!-- Section to list all uploaded PDFs -->
+    <h2>Uploaded PDFs</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Download</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% files.forEach(files => { %>
+                <tr>
+                    <td><%= file %></td>
+                    <td><button onclick="downloadPDF('<%= file %>')">Download</button></td>
+                    <td><button onclick="deletePDF('<%= file %>')">Delete</button></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <script>
+        function downloadPDF(filename) {
+            window.location.href = `/download?file=${filename}`;
+        }
+
+        function deletePDF(filename) {
+            fetch(`/delete?file=${filename}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the PDF item from the list
+                        const item = document.querySelector(`li[data-filename="${filename}"]`);
+                        if (item) {
+                            item.remove();
+                        }
+                    } else {
+                        alert('Failed to delete the PDF');
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
