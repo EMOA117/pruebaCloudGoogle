@@ -27,36 +27,19 @@
             </tr>
         </thead>
         <tbody>
-            <% files.forEach(files => { %>
+            <% files.forEach(file => { %>
                 <tr>
-                    <td><%= file %></td>
-                    <td><button onclick="downloadPDF('<%= file %>')">Download</button></td>
-                    <td><button onclick="deletePDF('<%= file %>')">Delete</button></td>
+                    <td><%= file.name %></td>
+                    <td><a target="_blank" href="/download/<%= file.name %>">Download</a></td>
+                    <form action="/delete" method="post">
+                        <input type="hidden" name="fileName" value="<%= file.name %>">
+                        <td><button type="submit">Delete</button></td>
+                    </form>
                 </tr>
             <% }) %>
         </tbody>
     </table>
 
-    <script>
-        function downloadPDF(filename) {
-            window.location.href = `/download?file=${filename}`;
-        }
-
-        function deletePDF(filename) {
-            fetch(`/delete?file=${filename}`, { method: 'DELETE' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Remove the PDF item from the list
-                        const item = document.querySelector(`li[data-filename="${filename}"]`);
-                        if (item) {
-                            item.remove();
-                        }
-                    } else {
-                        alert('Failed to delete the PDF');
-                    }
-                });
-        }
-    </script>
+    
 </body>
 </html>
